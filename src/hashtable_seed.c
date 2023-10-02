@@ -7,7 +7,14 @@
 #endif
 
 #include <stdio.h>
+
+#ifdef HAVE_TIME_H
 #include <time.h>
+#endif
+
+#ifdef CUSTOM_RANDOM_SOURCE_H
+#include CUSTOM_RANDOM_SOURCE_H
+#endif
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
@@ -149,9 +156,13 @@ static int seed_from_timestamp_and_pid(uint32_t *seed) {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     *seed = (uint32_t)tv.tv_sec ^ (uint32_t)tv.tv_usec;
-#else
+#elif defined(HAVE_TIME_H)
     /* Seconds only */
     *seed = (uint32_t)time(NULL);
+#elif defined(RANDOM_FUNC_U32)
+    *seed = RANDOM_FUNC_U32();
+#else
+    *seed = 0;
 #endif
 
     /* XOR with PID for more randomness */
