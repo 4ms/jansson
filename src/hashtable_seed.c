@@ -51,6 +51,9 @@
 
 #include "jansson.h"
 
+#if (!defined(_WIN32) && defined(USE_URANDOM)) ||                                        \
+    (defined(_WIN32) && defined(USE_WINDOWS_CRYPTOAPI))
+
 static uint32_t buf_to_uint32(char *data) {
     size_t i;
     uint32_t result = 0;
@@ -60,6 +63,8 @@ static uint32_t buf_to_uint32(char *data) {
 
     return result;
 }
+
+#endif
 
 /* /dev/urandom */
 #if !defined(_WIN32) && defined(USE_URANDOM)
